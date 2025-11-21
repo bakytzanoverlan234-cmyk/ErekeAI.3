@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:openai_dart/openai_dart.dart' as open_ai;
-import '../config/private_keys.dart';
+import '../config/private_keys_local.dart';
 
 /// ЕДИНЫЙ AI КОНТРОЛЛЕР ПОД GROQ, СОВМЕСТИМЫЙ СО СТАРЫМ UI
 
@@ -17,7 +17,7 @@ class AIController extends ChangeNotifier {
   Map<String, dynamic> parameters = {};
 
   final String _baseUrl = "https://api.groq.com/openai/v1";
-  final String _apiKey = PrivateKeys.groqApiKey;
+  final String _apiKey = PrivateKeyslocal.groqApiKey;
 
   bool get canPrompt => !busy && _apiKey.isNotEmpty;
 
