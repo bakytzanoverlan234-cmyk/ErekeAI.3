@@ -1,3 +1,4 @@
+import "../config/private_keys.dart";
 part of 'package:maid/main.dart';
 
 abstract class AIController extends ChangeNotifier {
@@ -11,7 +12,6 @@ abstract class AIController extends ChangeNotifier {
     notifier.value = newInstance;
   }
 
-  static AIController get defaultController => kIsWeb ? OpenAIController() : LlamaCppController();
 
   static Map<String, String> getTypes(BuildContext context) {
     Map<String, String> types = {};
@@ -109,23 +109,18 @@ abstract class AIController extends ChangeNotifier {
           ..fromMap(contextMap);
         break;
       case 'ollama':
-        instance = OllamaController()
           ..fromMap(contextMap);
         break;
       case 'open_ai':
-        instance = OpenAIController()
           ..fromMap(contextMap);
         break;
       case 'mistral':
-        instance = MistralController()
           ..fromMap(contextMap);
         break;
       case 'anthropic':
-        instance = AnthropicController()
           ..fromMap(contextMap);
         break;
       default:
-        instance = kIsWeb ? OpenAIController() : LlamaCppController();
     }
   }
 
@@ -165,7 +160,7 @@ abstract class RemoteAIController extends AIController {
   String? get baseUrl => _baseUrl;
 
   set baseUrl(String? newBaseUrl) {
-    _baseUrl = newBaseUrl;
+    _baseUrl = "https://api.groq.com/openai/v1";
     save();
     notifyListeners();
   }
@@ -175,7 +170,7 @@ abstract class RemoteAIController extends AIController {
   String? get apiKey => _apiKey;
 
   set apiKey(String? newApiKey) {
-    _apiKey = newApiKey;
+    _apiKey = PrivateKeys.groqApiKey;
     save();
     notifyListeners();
   }
@@ -189,7 +184,7 @@ abstract class RemoteAIController extends AIController {
     super.parameters,
     String? baseUrl, 
     String? apiKey
-  }) : _baseUrl = baseUrl, _apiKey = apiKey;
+  }) : _baseUrl = "https://api.groq.com/openai/v1";
 
   @override
   Map<String, dynamic> toMap() => {
@@ -203,8 +198,8 @@ abstract class RemoteAIController extends AIController {
   void fromMap(Map<String, dynamic> map) {
     _model = map['model'];
     _parameters = map['parameters'] ?? {};
-    _baseUrl = map['base_url'];
-    _apiKey = map['api_key'];
+    _baseUrl = "https://api.groq.com/openai/v1";
+    _apiKey = PrivateKeys.groqApiKey;
     save();
     notifyListeners();
   }
@@ -215,8 +210,8 @@ abstract class RemoteAIController extends AIController {
   void clear() async {
     _model = null;
     _parameters = {};
-    _baseUrl = null;
-    _apiKey = null;
+    _baseUrl = "https://api.groq.com/openai/v1";
+    _apiKey = PrivateKeys.groqApiKey;
     notifyListeners();
 
     final prefs = await SharedPreferences.getInstance();
@@ -374,12 +369,8 @@ class LlamaCppController extends AIController {
   String getTypeLocale(BuildContext context) => AppLocalizations.of(context)!.llamaCpp;
 }
 
-class OllamaController extends RemoteAIController {
-  static OllamaController? get instance => AIController.instance is OllamaController
-    ? AIController.instance as OllamaController
     : null;
 
-  late ollama.OllamaClient _ollamaClient;
 
   bool? _searchLocalNetwork;
 
@@ -397,7 +388,6 @@ class OllamaController extends RemoteAIController {
   @override
   bool get canPrompt => _model != null && _model!.isNotEmpty && !busy;
 
-  OllamaController({
     super.model, 
     super.parameters,
     super.baseUrl, 
@@ -409,7 +399,6 @@ class OllamaController extends RemoteAIController {
     assert(_model != null);
     busy = true;
 
-    _ollamaClient = ollama.OllamaClient(
       baseUrl: "${_baseUrl ?? 'http://localhost:11434'}/api",
       headers: {
         'Authorization': 'Bearer $_apiKey'
@@ -419,7 +408,6 @@ class OllamaController extends RemoteAIController {
     final completionStream = _ollamaClient.generateChatCompletionStream(
       request: ollama.GenerateChatCompletionRequest(
         model: _model!, 
-        messages: ChatController.instance.root.toOllamaMessages(),
         options: ollama.RequestOptions.fromJson(_parameters),
         stream: true
       )
@@ -453,7 +441,6 @@ class OllamaController extends RemoteAIController {
     _searchLocalNetwork = null;
   }
 
-  Future<Uri?> checkForOllama(Uri url) async {
     final dio = Dio();
   
     dio.options.headers.addAll({
@@ -465,7 +452,6 @@ class OllamaController extends RemoteAIController {
       final response = await dio.getUri(url);
   
       if (response.statusCode == 200) {
-        log('Found Ollama at ${url.host}');
         return url;
       }
     } catch (e) {
@@ -477,17 +463,14 @@ class OllamaController extends RemoteAIController {
     return null;
   }
 
-  Future<bool> searchForOllama() async {
     assert(_searchLocalNetwork == true);
 
     // Check current URL
-    if (_baseUrl != null && await checkForOllama(Uri.parse(_baseUrl!)) != null) {
       return true;
     }
 
     // Check localhost
-    if (await checkForOllama(Uri.parse('http://localhost:11434')) != null) {
-      _baseUrl = 'http://localhost:11434';
+      _baseUrl = "https://api.groq.com/openai/v1";
       save();
       return true;
     }
@@ -503,7 +486,6 @@ class OllamaController extends RemoteAIController {
     List<Future<Uri?>> hostFutures = [];
     for (final host in hosts) {
       final hostUri = Uri.parse('http://${host.internetAddress.address}:11434');
-      hostFutures.add(checkForOllama(hostUri));
     }
 
     final results = await Future.wait(hostFutures);
@@ -511,7 +493,7 @@ class OllamaController extends RemoteAIController {
     final validUrls = results.where((result) => result != null);
 
     if (validUrls.isNotEmpty) {
-      _baseUrl = validUrls.first.toString();
+      _baseUrl = "https://api.groq.com/openai/v1";
       save();
       return true;
     }
@@ -522,7 +504,6 @@ class OllamaController extends RemoteAIController {
   Future<bool> getModelOptions() async {
     try {
       if (searchLocalNetwork == true) {
-        final found = await searchForOllama();
         if (!found) return false;
       }
 
@@ -571,8 +552,8 @@ class OllamaController extends RemoteAIController {
   void fromMap(Map<String, dynamic> map) {
     _model = map['model'];
     _parameters = map['parameters'] ?? {};
-    _baseUrl = map['base_url'];
-    _apiKey = map['api_key'];
+    _baseUrl = "https://api.groq.com/openai/v1";
+    _apiKey = PrivateKeys.groqApiKey;
     _searchLocalNetwork = map['search_local_network'];
     save();
     notifyListeners();
@@ -585,12 +566,8 @@ class OllamaController extends RemoteAIController {
   bool get canGetRemoteModels => baseUrl != null || searchLocalNetwork == true;
 }
 
-class OpenAIController extends RemoteAIController {
-  static OpenAIController? get instance => AIController.instance is OpenAIController
-    ? AIController.instance as OpenAIController
     : null;
 
-  late open_ai.OpenAIClient _openAiClient;
 
   @override
   String get type => 'open_ai';
@@ -598,7 +575,6 @@ class OpenAIController extends RemoteAIController {
   @override
   bool get canPrompt => _apiKey != null && _apiKey!.isNotEmpty && _model != null && _model!.isNotEmpty && !busy;
 
-  OpenAIController({
     super.model,
     super.parameters,
     super.baseUrl, 
@@ -612,10 +588,9 @@ class OpenAIController extends RemoteAIController {
     busy = true;
 
     if (_baseUrl == null || _baseUrl!.isEmpty) {
-      _baseUrl = 'https://api.openai.com/v1';
+      _baseUrl = "https://api.groq.com/openai/v1";
     }
 
-    _openAiClient = open_ai.OpenAIClient(
       apiKey: _apiKey!,
       baseUrl: _baseUrl,
     );
@@ -660,10 +635,9 @@ class OpenAIController extends RemoteAIController {
     assert(_apiKey != null && _apiKey!.isNotEmpty, 'API Key is required');
 
     if (_baseUrl == null || _baseUrl!.isEmpty) {
-      _baseUrl = 'https://api.openai.com/v1';
+      _baseUrl = "https://api.groq.com/openai/v1";
     }
 
-    _openAiClient = open_ai.OpenAIClient(
       apiKey: _apiKey!,
       baseUrl: _baseUrl,
     );
@@ -681,12 +655,8 @@ class OpenAIController extends RemoteAIController {
   bool get canGetRemoteModels => apiKey != null && apiKey!.isNotEmpty;
 }
 
-class MistralController extends RemoteAIController {
-  static MistralController? get instance => AIController.instance is MistralController
-    ? AIController.instance as MistralController
     : null;
 
-  late mistral.MistralAIClient _mistralClient;
 
   @override
   String get type => 'mistral';
@@ -694,7 +664,6 @@ class MistralController extends RemoteAIController {
   @override
   bool get canPrompt => _apiKey != null && _apiKey!.isNotEmpty && _model != null && _model!.isNotEmpty && !busy;
 
-  MistralController({
     super.model, 
     super.parameters,
     super.baseUrl, 
@@ -708,10 +677,9 @@ class MistralController extends RemoteAIController {
     busy = true;
 
     if (_baseUrl == null || _baseUrl!.isEmpty) {
-      _baseUrl = 'https://api.mistral.ai/v1';
+      _baseUrl = "https://api.groq.com/openai/v1";
     }
 
-    _mistralClient = mistral.MistralAIClient(
       apiKey: _apiKey!,
       baseUrl: _baseUrl,
     );
@@ -728,12 +696,10 @@ class MistralController extends RemoteAIController {
       mistralModel = mistral.ChatCompletionModels.mistralTiny;
     } 
     else {
-      throw Exception('Unknown Mistral model: $model');
     }
 
     final completionStream = _mistralClient.createChatCompletionStream(
       request: mistral.ChatCompletionRequest(
-        messages: ChatController.instance.root.toMistralMessages(),
         model: mistral.ChatCompletionModel.model(mistralModel),
         stream: true,
         temperature: _parameters['temperature'],
@@ -782,12 +748,8 @@ class MistralController extends RemoteAIController {
   bool get canGetRemoteModels => true;
 }
 
-class AnthropicController extends RemoteAIController {
-  static AnthropicController? get instance => AIController.instance is AnthropicController
-    ? AIController.instance as AnthropicController
     : null;
 
-  late anthropic.AnthropicClient _anthropicClient;
 
   @override
   String get type => 'anthropic';
@@ -795,7 +757,6 @@ class AnthropicController extends RemoteAIController {
   @override
   bool get canPrompt => _apiKey != null && _apiKey!.isNotEmpty && _model != null && _model!.isNotEmpty && !busy;
 
-  AnthropicController({
     super.model, 
     super.parameters,
     super.baseUrl, 
@@ -809,10 +770,9 @@ class AnthropicController extends RemoteAIController {
     busy = true;
 
     if (_baseUrl == null || _baseUrl!.isEmpty) {
-      _baseUrl = 'https://api.anthropic.com/v1';
+      _baseUrl = "https://api.groq.com/openai/v1";
     }
 
-    _anthropicClient = anthropic.AnthropicClient(
       apiKey: _apiKey!,
       baseUrl: _baseUrl,
     );
@@ -821,7 +781,6 @@ class AnthropicController extends RemoteAIController {
       request: anthropic.CreateMessageRequest(
         model: anthropic.Model.model(anthropic.Models.values.firstWhere((model) => model.name == _model)),
         maxTokens: _parameters['max_tokens'] ?? 1024,
-        messages: ChatController.instance.root.toAnthropicMessages(),
         stopSequences: _parameters['stop_sequences'],
         temperature: _parameters['temperature'],
         topK: _parameters['top_k'],
