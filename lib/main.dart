@@ -8,7 +8,6 @@ import 'package:anthropic_sdk_dart/anthropic_sdk_dart.dart' as anthropic;
 import 'package:intl/intl.dart';
 import 'package:crypto/crypto.dart';
 import 'package:package_info_plus/package_info_plus.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:uuid/uuid.dart';
 import 'package:yaml/yaml.dart';
 import 'package:flutter/foundation.dart';
@@ -74,7 +73,6 @@ part 'widgets/pages/about_page.dart';
 part 'widgets/pages/debug_page.dart';
 part 'widgets/pages/home_page.dart';
 part 'widgets/pages/huggingface_page.dart';
-part 'widgets/pages/login_page.dart';
 part 'widgets/pages/registration_page.dart';
 part 'widgets/pages/reset_password_page.dart';
 part 'widgets/pages/settings_page.dart';
@@ -98,13 +96,6 @@ Future<void> main() async {
 
   final info = await PackageInfo.fromPlatform();
 
-  await Supabase.initialize(
-    url: 'https://xkmctciifomyexlspoua.supabase.co',
-    anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhrbWN0Y2lpZm9teWV4bHNwb3VhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQ1OTEzODcsImV4cCI6MjA2MDE2NzM4N30.LkgnbusOxZNBDWIrQoRAWP0oYBO5sAFznhuYTMDWshU',
-    headers:  {
-      'user-agent': '${info.appName}/${info.version}',
-    }
-  );
 
   await AIController.load();
 
@@ -173,8 +164,6 @@ class Maid extends StatelessWidget {
       '/settings': (context) => SettingsPage(),
       '/chat': (context) => HomePage(),
       '/about': (context) => const AboutPage(),
-      '/login': (context) => LoginPage(),
-      '/register': (context) => RegistrationPage(),
       '/reset-password': (context) => ResetPasswordPage(),
       '/huggingface': (context) => HuggingFacePage(),
       if (kDebugMode) '/debug': (context) => DebugPage(),
