@@ -1,7 +1,6 @@
 part of 'package:maid/main.dart';
 
 class MainDrawer extends StatelessWidget {
-  final ValueNotifier<Session?> sessionNotifier = ValueNotifier(Supabase.instance.client.auth.currentSession);
 
   MainDrawer({super.key});
 
@@ -101,14 +100,11 @@ class MainDrawer extends StatelessWidget {
     mainAxisAlignment: MainAxisAlignment.spaceBetween,
     children: [
       Text(
-        Supabase.instance.client.auth.currentSession?.user.userMetadata?['user_name'] ?? AppLocalizations.of(context)!.user,
         style: Theme.of(context).textTheme.titleSmall,
       ),
       IconButton(
         tooltip: AppLocalizations.of(context)!.logout,
         onPressed: () async {
-          await Supabase.instance.client.auth.signOut();
-          sessionNotifier.value = Supabase.instance.client.auth.currentSession;
         },
         icon: const Icon(Icons.logout),
       ),

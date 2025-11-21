@@ -1,50 +1,50 @@
-import "groq_ai_controller.dart";
-part of 'package:maid/main.dart';
-
-import 'dart:convert';
+import 'dart:async';
 import 'package:flutter/foundation.dart';
+import 'package:openai_dart/openai_dart.dart' as open_ai;
 import '../config/private_keys.dart';
 
+/// ЕДИНЫЙ AI КОНТРОЛЛЕР ПОД GROQ, СОВМЕСТИМЫЙ СО СТАРЫМ UI
 
-class GroqAIController extends ChangeNotifier {
-  bool _busy = false;
-  String? _model;
-  Map<String, dynamic> _parameters = {};
+class AIController extends ChangeNotifier {
+  static final ValueNotifier<AIController> notifier = ValueNotifier(AIController._internal());
+  static AIController get instance => notifier.value;
 
-  bool get busy => _busy;
-  String? get model => _model;
+  AIController._internal();
 
-  set model(String? value) {
-    _model = value;
+  bool busy = false;
+
+  String model = "llama3-70b-8192";
+  Map<String, dynamic> parameters = {};
+
+  final String _baseUrl = "https://api.groq.com/openai/v1";
+  final String _apiKey = PrivateKeys.groqApiKey;
+
+  bool get canPrompt => !busy && _apiKey.isNotEmpty;
+
+  static Map<String, String> getTypes(context) {
+    return {"groq": "Groq AI"};
+  }
+
+  static Future<void> load([String? type]) async {}
+
+  Future<void> save() async {}
+
+  Stream<String> prompt() async* {
+    busy = true;
     notifyListeners();
-  }
 
-  GroqAIController() {
-    _configure();
-  }
-
-  void _configure() {
-      apiKey: PrivateKeys.groqApiKey,
-      baseUrl: "https://api.groq.com/openai/v1",
+    final client = open_ai.OpenAIClient(
+      apiKey: _apiKey,
+      baseUrl: _baseUrl,
     );
-  }
 
-  bool get canPrompt => _model != null && _model!.isNotEmpty && !_busy;
-
-  Stream<String> prompt(List<Map<String, dynamic>> messages) async* {
-    if (!canPrompt) {
-      yield "Модель не выбрана или API не настроен";
-      return;
-    }
-
-    _busy = true;
-    notifyListeners();
-
-    final stream = _openAiClient.createChatCompletionStream(
-        messages: messages,
+    final stream = client.createChatCompletionStream(
+      request: open_ai.CreateChatCompletionRequest(
+        model: open_ai.ChatCompletionModel.modelId(model),
+        messages: [
+          {"role": "user", "content": "Привет"}
+        ],
         stream: true,
-        temperature: _parameters['temperature'] ?? 0.7,
-        maxTokens: _parameters['max_tokens'] ?? 1024,
       ),
     );
 
@@ -55,13 +55,26 @@ class GroqAIController extends ChangeNotifier {
         }
       }
     } finally {
-      _busy = false;
+      busy = false;
       notifyListeners();
     }
   }
 
-  Future<List<String>> getModels() async {
-    final response = await _openAiClient.listModels();
-    return response.data.map((m) => m.id).toList();
-  }
+  void clear() {}
+}
+
+/// Заглушки для старых классов чтобы UI не падал
+
+class LlamaCppController {
+  static LlamaCppController? instance;
+  String? model;
+  void reloadModel([bool force = false]) {}
+}
+
+class RemoteAIController {
+  static RemoteAIController? instance;
+  String? model;
+  List<String> modelOptions = [];
+  bool get canGetRemoteModels => false;
+  Future<bool> getModelOptions() async => false;
 }
