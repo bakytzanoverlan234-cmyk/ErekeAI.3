@@ -26,11 +26,11 @@ jobs:
     - name: Install dependencies
       run: flutter pub get
 
-    - name: Build APK
+    - name: Build APK (DEBUG)
       run: flutter build apk --debug
 
     - name: Upload APK
       uses: actions/upload-artifact@v4
       with:
         name: ErekeAI-APK
-        path: build/app/outputs/flutter-apk/app-release.apk
+        path: build/app/outputs/flutter-apk/app-debug.apk
