@@ -9,7 +9,7 @@ class HuggingfaceManager {
     return '${cache.path}/$fileName';
   }
 
-  static Stream<double> download(String repo, String branch, String fileName, LlamaCppController llama) async* {
+  static Stream<double> download(String repo, String branch, String fileName, dynamic llama) async* {
     final filePath = await getFilePath(fileName);
 
     downloadProgress[fileName] = StreamController<double>.broadcast();

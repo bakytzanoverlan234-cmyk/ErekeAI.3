@@ -7,7 +7,7 @@ class HuggingfaceModel extends StatefulWidget {
   final double parameters; // Billions of parameters
   final bool nsfw;
   final Map<String, String> tags;
-  final LlamaCppController llama;
+  final dynamic llama;
 
   const HuggingfaceModel({
     super.key, 

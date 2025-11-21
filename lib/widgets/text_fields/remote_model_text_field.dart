@@ -7,7 +7,6 @@ class RemoteModelTextField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => ListenableBuilder(
-    listenable: RemoteAIController.instance!,
     builder: buildListener,
   );
 
@@ -48,9 +47,6 @@ class RemoteModelTextField extends StatelessWidget {
 
 
   Widget buildCustom(BuildContext context) => ListenableTextField(
-    listenable: RemoteAIController.instance!,
-    selector: () => RemoteAIController.instance!.model,
-    onChanged: (value) => RemoteAIController.instance!.model = value,
     labelText: AppLocalizations.of(context)!.remoteModel,
     requireSave: true,
   );

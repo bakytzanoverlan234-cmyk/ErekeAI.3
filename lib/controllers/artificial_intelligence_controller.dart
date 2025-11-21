@@ -80,3 +80,26 @@ class RemoteAIController {
   bool get canGetRemoteModels => false;
   Future<bool> getModelOptions() async => false;
 }
+
+class RemoteAIController extends ChangeNotifier {
+  static RemoteAIController? instance = RemoteAIController();
+
+  String? model;
+  List<String> modelOptions = [];
+
+  bool get canGetRemoteModels => false;
+
+  Future<bool> getModelOptions() async => false;
+}
+
+class LlamaCppController extends ChangeNotifier {
+  static LlamaCppController? instance = LlamaCppController();
+
+  bool loading = false;
+  String? model;
+  List<String> modelOptions = [];
+
+  void reloadModel([bool force = false]) {}
+  void pickModel() {}
+  void loadModelFile(String path, bool force) {}
+}
