@@ -1,33 +1,56 @@
-// ===== KEYSTORE LOAD =====
-def keystoreProperties = new Properties()
-def keystorePropertiesFile = rootProject.file('key.properties')
-if (keystorePropertiesFile.exists()) {
-    keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+plugins {
+    id "com.android.application"
+    id "kotlin-android"
+    id "dev.flutter.flutter-gradle-plugin"
 }
 
-// ===== ANDROID CONFIG =====
-signingConfigs {
-    release {
-        storeFile file(keystoreProperties['storeFile'])
-        storePassword keystoreProperties['storePassword']
-        keyAlias keystoreProperties['keyAlias']
-        keyPassword keystoreProperties['keyPassword']
-    }
-    debug {
-        storeFile file(keystoreProperties['storeFile'])
-        storePassword keystoreProperties['storePassword']
-        keyAlias keystoreProperties['keyAlias']
-        keyPassword keystoreProperties['keyPassword']
+def localProperties = new Properties()
+def localPropertiesFile = rootProject.file('local.properties')
+if (localPropertiesFile.exists()) {
+    localPropertiesFile.withReader('UTF-8') { reader ->
+        localProperties.load(reader)
     }
 }
 
-buildTypes {
-    release {
-        signingConfig signingConfigs.release
-        minifyEnabled false
-        shrinkResources false
+def flutterVersionCode = 
+localProperties.getProperty('flutter.versionCode')?.toInteger() ?: 1
+def flutterVersionName = 
+localProperties.getProperty('flutter.versionName') ?: "1.0"
+
+android {
+    namespace "com.ereke.ai"
+    compileSdk flutter.compileSdkVersion
+    ndkVersion flutter.ndkVersion
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
     }
-    debug {
-        signingConfig signingConfigs.debug
+
+    kotlinOptions {
+        jvmTarget = '1.8'
     }
+
+    defaultConfig {
+        applicationId "com.ereke.ai"
+        minSdk 23
+        targetSdk flutter.targetSdkVersion
+        versionCode flutterVersionCode
+        versionName flutterVersionName
+    }
+
+    buildTypes {
+        release {
+            // Пока без кастомной подписи, чтобы не ломать CI
+            minifyEnabled false
+            shrinkResources false
+        }
+        debug {
+            // стандартная debug-подпись от Gradle
+        }
+    }
+}
+
+flutter {
+    source "../.."
 }
