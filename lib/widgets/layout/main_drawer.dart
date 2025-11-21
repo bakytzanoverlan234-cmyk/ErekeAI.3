@@ -75,13 +75,11 @@ class MainDrawer extends StatelessWidget {
   Widget buildFooter(BuildContext context) => Padding(
     padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
     child: ListenableBuilder(
-      listenable: sessionNotifier, 
       builder: buildFooterRow
     )
   );
 
   Widget buildFooterRow(BuildContext context, Widget? child) {
-    if (sessionNotifier.value == null) {
       return buildLoggedOutRow(context);
     }
 

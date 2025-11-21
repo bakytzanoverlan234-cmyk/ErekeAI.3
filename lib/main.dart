@@ -34,7 +34,6 @@ import 'package:mistralai_dart/mistralai_dart.dart' as mistral;
 import 'package:url_launcher/url_launcher.dart';
 
 part 'controllers/app_settings.dart';
-part 'controllers/artificial_intelligence_controller.dart';
 part 'controllers/chat_controller.dart';
 
 part 'utilities/chat_messages_extension.dart';

@@ -239,7 +239,6 @@ class AppSettings extends ChangeNotifier {
 
   void load() async {
     final prefs = await SharedPreferences.getInstance();
-    final user = Supabase.instance.client.auth.currentUser;
     
     final userImageBytes = prefs.getString('userImage');
     if (userImageBytes != null) {
@@ -247,7 +246,6 @@ class AppSettings extends ChangeNotifier {
     }
     else if (user != null) {
       try {
-        final image = await Supabase.instance.client.storage
             .from('user-images')
             .download('${user.id}.jpg');
 
@@ -274,7 +272,6 @@ class AppSettings extends ChangeNotifier {
     }
     else if (user != null) {
       try {
-        final image = await Supabase.instance.client.storage
             .from('assistant-images')
             .download('${user.id}.jpg');
 
@@ -325,7 +322,6 @@ class AppSettings extends ChangeNotifier {
 
   void save() async {
     final prefs = await SharedPreferences.getInstance();
-    final user = Supabase.instance.client.auth.currentUser;
     
     if (userImage != null) {
       prefs.setString('userImage', base64.encode(userImage!));
@@ -334,7 +330,6 @@ class AppSettings extends ChangeNotifier {
         final image = img.decodeImage(userImage!);
         final imageJpeg = img.encodeJpg(image!, quality: 100);
 
-        await Supabase.instance.client.storage.from('user-images')
         .uploadBinary(
           '${user.id}.jpg',
           imageJpeg,
@@ -350,7 +345,6 @@ class AppSettings extends ChangeNotifier {
       prefs.setString('userName', userName!);
 
       if (user != null) {
-        await Supabase.instance.client.auth.updateUser(
           UserAttributes(
             data: {
               'user_name': userName,
@@ -370,7 +364,6 @@ class AppSettings extends ChangeNotifier {
         final image = img.decodeImage(assistantImage!);
         final imageJpeg = img.encodeJpg(image!, quality: 100);
 
-        await Supabase.instance.client.storage.from('assistant-images')
         .uploadBinary(
           '${user.id}.jpg',
           imageJpeg,

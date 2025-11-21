@@ -1,29 +1,25 @@
 import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:openai_dart/openai_dart.dart' as open_ai;
-import '../config/private_keys_local.dart';
-
-/// ЕДИНЫЙ AI КОНТРОЛЛЕР ПОД GROQ, СОВМЕСТИМЫЙ СО СТАРЫМ UI
+import '../config/private_keys.dart';
 
 class AIController extends ChangeNotifier {
-  static final ValueNotifier<AIController> notifier = ValueNotifier(AIController._internal());
+  static final notifier = ValueNotifier(AIController._());
   static AIController get instance => notifier.value;
 
-  AIController._internal();
+  AIController._();
 
   bool busy = false;
-
   String model = "llama3-70b-8192";
-  Map<String, dynamic> parameters = {};
 
+  final String _apiKey = PrivateKeys.groqApiKey;
   final String _baseUrl = "https://api.groq.com/openai/v1";
-  final String _apiKey = PrivateKeyslocal.groqApiKey;
 
   bool get canPrompt => !busy && _apiKey.isNotEmpty;
 
-  static Map<String, String> getTypes(context) {
-    return {"groq": "Groq AI"};
-  }
+  static Map<String, String> getTypes(context) => {
+        "groq": "Groq AI",
+      };
 
   static Future<void> load([String? type]) async {}
 
@@ -63,12 +59,18 @@ class AIController extends ChangeNotifier {
   void clear() {}
 }
 
-/// Заглушки для старых классов чтобы UI не падал
+/// ЗАГЛУШКИ чтобы UI не падал
 
-class LlamaCppController {
+class LlamaCppController extends ChangeNotifier {
   static LlamaCppController? instance;
+
+  bool loading = false;
   String? model;
+  List<String> modelOptions = [];
+
   void reloadModel([bool force = false]) {}
+  void pickModel() {}
+  void loadModelFile(String path, bool force) {}
 }
 
 class RemoteAIController {

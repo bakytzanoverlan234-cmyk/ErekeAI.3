@@ -134,8 +134,6 @@ class ChatController extends ChangeNotifier {
   }
 
   Future<void> load() async {
-    if (Supabase.instance.client.auth.currentUser != null) {
-      await loadSupabase();
 
       if (_mapping.isNotEmpty) return;
     }
@@ -167,15 +165,12 @@ class ChatController extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> loadSupabase() async {
-    if (Supabase.instance.client.auth.currentUser == null) throw Exception('User not logged in');
 
     const pageSize = 1000;
     int offset = 0;
     List<Map<String, dynamic>> data = [];
 
     while (true) {
-      final page = await Supabase.instance.client
           .from('chat_messages')
           .select('*')
           .range(offset, offset + pageSize - 1);
@@ -215,12 +210,9 @@ class ChatController extends ChangeNotifier {
 
     await prefs.setStringList('chat_messages', chatsStrings);
 
-    if (Supabase.instance.client.auth.currentUser == null) return;
 
-    final userId = Supabase.instance.client.auth.currentUser!.id;
 
     for (final msg in messages) {
-      await Supabase.instance.client.from('chat_messages').upsert({
         'id': msg['id'],
         'user_id': userId,
         'role': msg['role'],
@@ -232,7 +224,6 @@ class ChatController extends ChangeNotifier {
     }
 
     for (final msg in messages) {
-      await Supabase.instance.client.from('chat_messages').update({
         'children': msg['children'],
         'current_child': msg['current_child'],
       }).eq('id', msg['id']);
