@@ -15,4 +15,8 @@ class AIController extends ChangeNotifier {
   Future<void> save() async {}
 
   String getTypeLocale(context) => "Groq AI";
+  void stop() {
+    busy = false;
+    notifyListeners();
+  }
 }
