@@ -7,19 +7,11 @@ class GroqAIController extends ChangeNotifier {
   bool _busy = false;
   bool get busy => _busy;
 
-  String? _model;
-  String? _apiKey;
-  String? _baseUrl;
+  String? _model = "llama3-70b-8192";
+  final String _baseUrl = "https://api.groq.com/openai/v1";
+  final String _apiKey = PrivateKeys.groqApiKey;
 
-  List<String> _modelOptions = [];
-
-  GroqAIController() {
-    _apiKey = PrivateKeys.groqApiKey;
-    _baseUrl = "https://api.groq.com/openai/v1";
-  }
-
-  bool get canPrompt =>
-      _apiKey != null && _apiKey!.isNotEmpty && _model != null && !busy;
+  bool get canPrompt => _apiKey.isNotEmpty && _model != null && !_busy;
 
   Stream<String> prompt(List<Map<String, String>> messages) async* {
     if (!canPrompt) return;
@@ -28,8 +20,8 @@ class GroqAIController extends ChangeNotifier {
     notifyListeners();
 
     final client = open_ai.OpenAIClient(
-      apiKey: _apiKey!,
-      baseUrl: _baseUrl!,
+      apiKey: _apiKey,
+      baseUrl: _baseUrl,
     );
 
     final stream = client.createChatCompletionStream(
@@ -50,22 +42,5 @@ class GroqAIController extends ChangeNotifier {
       _busy = false;
       notifyListeners();
     }
-  }
-
-  Future<void> loadModels() async {
-    final client = open_ai.OpenAIClient(
-      apiKey: _apiKey!,
-      baseUrl: _baseUrl!,
-    );
-
-    final models = await client.listModels();
-    _modelOptions = models.data.map((m) => m.id).toList();
-  }
-
-  List<String> get modelOptions => _modelOptions;
-
-  void setModel(String model) {
-    _model = model;
-    notifyListeners();
   }
 }
