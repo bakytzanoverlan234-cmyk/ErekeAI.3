@@ -15,18 +15,22 @@ jobs:
     - name: Set up Java
       uses: actions/setup-java@v3
       with:
-        distribution: 'temurin'
+        distribution: temurin
         java-version: '17'
 
     - name: Set up Flutter
       uses: subosito/flutter-action@v2
       with:
         flutter-version: '3.29.0'
+        channel: stable
+
+    - name: Disable Flutter analytics
+      run: flutter config --no-analytics
 
     - name: Install dependencies
       run: flutter pub get
 
-    - name: Build APK (DEBUG)
+    - name: Build APK DEBUG
       run: flutter build apk --debug
 
     - name: Upload APK
