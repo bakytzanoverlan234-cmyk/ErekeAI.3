@@ -135,3 +135,4 @@ app.*.symbols
 docs/.~lock.API-Compatability.ods#
 dmg/maid_tmp.dmg
 lib/config/private_keys.dart
+lib/config/private_keys.dart
