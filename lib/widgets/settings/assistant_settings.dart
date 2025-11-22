@@ -1,48 +1,47 @@
-import "package:maid/controllers/app_settings.dart";
-part of 'package:maid/main.dart';
+import 'package:flutter/material.dart';
+import 'package:maid/controllers/app_settings.dart';
 
-class AssistantSettings extends StatelessWidget {
+class AssistantSettings extends StatefulWidget {
   const AssistantSettings({super.key});
 
   @override
-  Widget build(BuildContext context) => Column(
-    children: [
-      Text(
-        AppLocalizations.of(context)!.assistantSettings,
-        style: Theme.of(context).textTheme.titleMedium,
-      ),
-      const SizedBox(height: 8),
-      ListenableBuilder(
-        listenable: AppSettings.instance,
-        builder: assistantImageBuilder,
-      ),
-      const SizedBox(height: 8),
-      ElevatedButton(
-        onPressed: AppSettings.instance.loadAssistantImage, 
-        child: Text(AppLocalizations.of(context)!.loadAssistantImage),
-      ),
-      const SizedBox(height: 8),
-      ListenableTextField<AppSettings>(
-        listenable: AppSettings.instance,
-        selector: () => AppSettings.instance.assistantName,
-        onChanged: AppSettings.instance.setAssistantName,
-        labelText: AppLocalizations.of(context)!.assistantName,
-      ),
-    ],
-  );
+  State<AssistantSettings> createState() => _AssistantSettingsState();
+}
 
-  Widget assistantImageBuilder(BuildContext context, Widget? child) {
-    if (AppSettings.instance.assistantImage == null) {
-      return Icon(
-        Icons.assistant, 
-        size: 50,
-        color: Theme.of(context).colorScheme.onSurface
-      );
-    }
+class _AssistantSettingsState extends State<AssistantSettings> {
+  late final TextEditingController _controller;
 
-    return CircleAvatar(
-      radius: 50,
-      backgroundImage: MemoryImage(AppSettings.instance.assistantImage!),
+  @override
+  void initState() {
+    super.initState();
+    _controller = TextEditingController(
+      text: AppSettings.instance.assistantName ?? '',
+    );
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final settings = AppSettings.instance;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text('Имя ассистента'),
+        const SizedBox(height: 8),
+        TextField(
+          controller: _controller,
+          onChanged: settings.setAssistantName,
+          decoration: const InputDecoration(
+            border: OutlineInputBorder(),
+          ),
+        ),
+      ],
     );
   }
 }
