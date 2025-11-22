@@ -1,3 +1,4 @@
+import "controllers/artificial_intelligence_controller.dart";
 import 'controllers/artificial_intelligence_controller.dart';
 import 'dart:async';
 import 'dart:convert';

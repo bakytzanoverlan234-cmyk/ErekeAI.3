@@ -9,7 +9,7 @@ class AIController extends ChangeNotifier {
   bool get canPrompt => !busy;
 
   void clear() {
-    print("AIController.clear() вызван (заглушка)");
+    debugPrint("AIController.clear() invoked (stub)");
   }
 
   void stop() {
