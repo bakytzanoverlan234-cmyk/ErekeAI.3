@@ -2,7 +2,8 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 
 class AIController extends ChangeNotifier {
-  static final ValueNotifier<AIController> notifier = ValueNotifier(AIController._internal());
+  static final ValueNotifier<AIController> notifier =
+      ValueNotifier(AIController._internal());
   static AIController get instance => notifier.value;
 
   AIController._internal();
@@ -10,9 +11,9 @@ class AIController extends ChangeNotifier {
   bool busy = false;
 
   String model = "llama3-70b-8192";
-  Map<String, dynamic> parameters = {};
-
   String type = "groq";
+
+  Map<String, dynamic> parameters = {};
 
   bool get canPrompt => !busy;
 
@@ -29,12 +30,20 @@ class AIController extends ChangeNotifier {
 
   Future<void> save() async {}
 
-  Stream<String> prompt() async* {}
+  Stream<String> prompt() async* {
+    busy = true;
+    notifyListeners();
+
+    yield "Groq подключён";
+
+    busy = false;
+    notifyListeners();
+  }
 
   void clear() {}
 }
 
-/// ✅ ПОЛНАЯ заглушка RemoteAIController под ожидания UI
+/// ✅ Заглушка RemoteAIController под UI
 class RemoteAIController extends ChangeNotifier {
   static RemoteAIController? instance = RemoteAIController();
 
@@ -49,7 +58,7 @@ class RemoteAIController extends ChangeNotifier {
   Future<bool> getModelOptions() async => false;
 }
 
-/// ✅ Полная заглушка LlamaCppController
+/// ✅ Заглушка LlamaCppController под UI
 class LlamaCppController extends ChangeNotifier {
   static LlamaCppController? instance = LlamaCppController();
 
