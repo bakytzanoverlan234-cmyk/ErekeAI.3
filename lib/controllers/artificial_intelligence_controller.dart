@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/foundation.dart';
 
 class AIController extends ChangeNotifier {
@@ -7,16 +8,56 @@ class AIController extends ChangeNotifier {
   AIController._internal();
 
   bool busy = false;
+
+  String model = "llama3-70b-8192";
+  Map<String, dynamic> parameters = {};
+
   String type = "groq";
 
-  static Map<String, String> getTypes(context) => {"groq": "Groq AI"};
+  bool get canPrompt => !busy;
 
-  static Future<void> load([String? type]) async {}
-  Future<void> save() async {}
-
-  String getTypeLocale(context) => "Groq AI";
   void stop() {
     busy = false;
     notifyListeners();
   }
+
+  static Map<String, String> getTypes(context) {
+    return {"groq": "Groq AI"};
+  }
+
+  static Future<void> load([String? type]) async {}
+
+  Future<void> save() async {}
+
+  Stream<String> prompt() async* {}
+
+  void clear() {}
+}
+
+/// ✅ ПОЛНАЯ заглушка RemoteAIController под ожидания UI
+class RemoteAIController extends ChangeNotifier {
+  static RemoteAIController? instance = RemoteAIController();
+
+  String apiKey = "";
+  String baseUrl = "";
+
+  String? model;
+  List<String> modelOptions = [];
+
+  bool get canGetRemoteModels => false;
+
+  Future<bool> getModelOptions() async => false;
+}
+
+/// ✅ Полная заглушка LlamaCppController
+class LlamaCppController extends ChangeNotifier {
+  static LlamaCppController? instance = LlamaCppController();
+
+  bool loading = false;
+  String? model;
+  List<String> modelOptions = [];
+
+  void reloadModel([bool force = false]) {}
+  void pickModel() {}
+  void loadModelFile(String path, bool force) {}
 }
