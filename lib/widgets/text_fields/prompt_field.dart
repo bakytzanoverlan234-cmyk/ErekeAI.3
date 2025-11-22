@@ -13,7 +13,6 @@ class PromptFieldState extends State<PromptField> {
 
   void onSubmit() {
     if (controller.text.trim().isEmpty) return;
-    // можно позже подключить реальную отправку
     controller.clear();
   }
 
