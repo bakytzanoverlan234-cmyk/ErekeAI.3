@@ -1,10 +1,6 @@
-import 'package:flutter/foundation.dart';
-
-class ChatController extends ChangeNotifier {
+class ChatController {
   static final ChatController instance = ChatController._internal();
   ChatController._internal();
 
-  void clear() {
-    debugPrint("ChatController.clear() заглушка");
-  }
+  void clear() {}
 }

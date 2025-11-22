@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
-
 class SystemSettings extends StatelessWidget {
+  const SystemSettings({super.key});
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(child: Text("System Settings Stub")),
-    );
+    return const Center(child: Text("System Settings"));
   }
 }
