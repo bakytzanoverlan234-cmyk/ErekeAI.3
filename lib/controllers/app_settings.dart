@@ -5,14 +5,24 @@ class AppSettings extends ChangeNotifier {
   static final AppSettings instance = AppSettings._internal();
   AppSettings._internal();
 
-  dynamic user;          // заглушка под старое поле
-  Uint8List? userImage;  // чтобы не падало на userImage
+  String? userName;
+  Uint8List? userImage;
 
   Future<void> load() async {
-    // тут можно потом добавить загрузку настроек
+    // Тут можно потом добавить загрузку настроек из SharedPreferences/файла
   }
 
   Future<void> save() async {
-    // тут можно потом добавить сохранение настроек
+    // Тут можно потом добавить сохранение настроек
+  }
+
+  void setUserName(String? name) {
+    userName = name;
+    notifyListeners();
+  }
+
+  void setUserImage(Uint8List? image) {
+    userImage = image;
+    notifyListeners();
   }
 }
