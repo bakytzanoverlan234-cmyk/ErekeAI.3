@@ -1,11 +1,10 @@
-import 'package:flutter/widgets.dart';
+import 'package:flutter/material.dart';
 
 class ApiKeyTextField extends StatelessWidget {
   const ApiKeyTextField({super.key});
 
   @override
   Widget build(BuildContext context) {
-    // Ключ теперь зашит локально, поле в UI не нужно
     return const SizedBox.shrink();
   }
 }
