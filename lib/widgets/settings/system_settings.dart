@@ -1,46 +1,48 @@
-import "package:maid/controllers/app_settings.dart";
-part of 'package:maid/main.dart';
+import 'package:flutter/material.dart';
+import 'package:maid/controllers/app_settings.dart';
 
-class SystemSettings extends StatelessWidget {
+class SystemSettings extends StatefulWidget {
   const SystemSettings({super.key});
 
   @override
-  Widget build(BuildContext context) => Column(
-    children: [
-      Text(
-        AppLocalizations.of(context)!.systemSettings,
-        style: Theme.of(context).textTheme.titleMedium,
-      ),
-      const SizedBox(height: 8),
-      ListenableTextField<AppSettings>(
-        listenable: AppSettings.instance,
-        selector: () => AppSettings.instance.systemPrompt,
-        onChanged: AppSettings.instance.setSystemPrompt,
-        labelText: AppLocalizations.of(context)!.systemPrompt,
-        keyboardType: TextInputType.multiline,
-        maxLines: null
-      ),
-      const SizedBox(height: 8),
-      LocaleDropdown(),
-      const SizedBox(height: 8),
-      ThemeModeDropdown(),
-      const SizedBox(height: 8),
-      Text(
-        AppLocalizations.of(context)!.themeSeedColor,
-        style: Theme.of(context).textTheme.labelLarge,
-      ),
-      const SizedBox(height: 4),
-      buildColorPicker(),
-    ],
-  );
+  State<SystemSettings> createState() => _SystemSettingsState();
+}
 
-  Widget buildColorPicker() => ListenableBuilder(
-    listenable: AppSettings.instance,
-    builder: (context, child) => HueRingPicker(
-      portraitOnly: true,
-      displayThumbColor: false,
-      pickerColor: AppSettings.instance.seedColor, 
-      onColorChanged: (newColor) => AppSettings.instance.seedColor = newColor,
-    ),
-  );
+class _SystemSettingsState extends State<SystemSettings> {
+  late final TextEditingController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = TextEditingController(
+      text: AppSettings.instance.systemPrompt,
+    );
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final settings = AppSettings.instance;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text('Системный промпт'),
+        const SizedBox(height: 8),
+        TextField(
+          controller: _controller,
+          maxLines: 5,
+          onChanged: settings.setSystemPrompt,
+          decoration: const InputDecoration(
+            border: OutlineInputBorder(),
+          ),
+        ),
+      ],
+    );
+  }
 }

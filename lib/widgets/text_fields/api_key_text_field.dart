@@ -1,15 +1,11 @@
-import "package:maid/controllers/artificial_intelligence_controller.dart";
-part of 'package:maid/main.dart';
+import 'package:flutter/widgets.dart';
 
 class ApiKeyTextField extends StatelessWidget {
   const ApiKeyTextField({super.key});
 
   @override
-  Widget build(BuildContext context) => ListenableTextField(
-    listenable: RemoteAIController.instance!,
-    selector: () => RemoteAIController.instance!.apiKey, 
-    onChanged: (value) => RemoteAIController.instance!.apiKey = value,
-    labelText: AppLocalizations.of(context)!.apiKey,
-    requireSave: true,
-  );
+  Widget build(BuildContext context) {
+    // Ключ теперь зашит локально, поле в UI не нужно
+    return const SizedBox.shrink();
+  }
 }

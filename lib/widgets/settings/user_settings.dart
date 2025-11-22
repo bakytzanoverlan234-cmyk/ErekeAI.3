@@ -1,48 +1,47 @@
-import "package:maid/controllers/app_settings.dart";
-part of 'package:maid/main.dart';
+import 'package:flutter/material.dart';
+import 'package:maid/controllers/app_settings.dart';
 
-class UserSettings extends StatelessWidget {
+class UserSettings extends StatefulWidget {
   const UserSettings({super.key});
 
   @override
-  Widget build(BuildContext context) => Column(
-    children: [
-      Text(
-        AppLocalizations.of(context)!.userSettings,
-        style: Theme.of(context).textTheme.titleMedium,
-      ),
-      const SizedBox(height: 8),
-      ListenableBuilder(
-        listenable: AppSettings.instance,
-        builder: userImageBuilder,
-      ),
-      const SizedBox(height: 8),
-      ElevatedButton(
-        onPressed: AppSettings.instance.loadUserImage, 
-        child: Text(AppLocalizations.of(context)!.loadUserImage),
-      ),
-      const SizedBox(height: 8),
-      ListenableTextField<AppSettings>(
-        listenable: AppSettings.instance,
-        selector: () => AppSettings.instance.userName,
-        onChanged: AppSettings.instance.setUserName,
-        labelText: AppLocalizations.of(context)!.userName,
-      ),
-    ],
-  );
+  State<UserSettings> createState() => _UserSettingsState();
+}
 
-  Widget userImageBuilder(BuildContext context, Widget? child) {
-    if (AppSettings.instance.userImage == null) {
-      return Icon(
-        Icons.person, 
-        size: 50,
-        color: Theme.of(context).colorScheme.onSurface
-      );
-    }
+class _UserSettingsState extends State<UserSettings> {
+  late final TextEditingController _nameController;
 
-    return CircleAvatar(
-      radius: 50,
-      backgroundImage: MemoryImage(AppSettings.instance.userImage!),
+  @override
+  void initState() {
+    super.initState();
+    _nameController = TextEditingController(
+      text: AppSettings.instance.userName ?? '',
+    );
+  }
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final settings = AppSettings.instance;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text('Имя пользователя'),
+        const SizedBox(height: 8),
+        TextField(
+          controller: _nameController,
+          onChanged: settings.setUserName,
+          decoration: const InputDecoration(
+            border: OutlineInputBorder(),
+          ),
+        ),
+      ],
     );
   }
 }

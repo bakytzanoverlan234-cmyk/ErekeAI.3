@@ -1,33 +1,11 @@
-import "package:maid/controllers/artificial_intelligence_controller.dart";
-part of 'package:maid/main.dart';
+import 'package:flutter/widgets.dart';
 
 class BaseUrlTextField extends StatelessWidget {
   const BaseUrlTextField({super.key});
 
-  void onChanged(BuildContext context, String value) {
-    if (kIsWeb  && value.contains('localhost')) {
-      showDialog(
-        context: context,
-        builder: exceptionBuilder,
-      );
-    }
-
-    RemoteAIController.instance!.baseUrl = value;
-  }
-
-  Widget exceptionBuilder(BuildContext context) => ErrorDialog(
-    exception: PlatformException(
-      code: 'localhost', 
-      message: 'localhost is not allowed on web'
-    ),
-  );
-
   @override
-  Widget build(BuildContext context) => ListenableTextField(
-    listenable: RemoteAIController.instance!,
-    selector: () => RemoteAIController.instance!.baseUrl, 
-    onChanged: (value) => onChanged(context, value),
-    labelText: AppLocalizations.of(context)!.baseUrl,
-    requireSave: true,
-  );
+  Widget build(BuildContext context) {
+    // Базовый URL фиксированный (https://api.groq.com/openai/v1)
+    return const SizedBox.shrink();
+  }
 }
