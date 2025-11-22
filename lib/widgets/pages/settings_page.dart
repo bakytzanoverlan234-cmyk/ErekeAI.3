@@ -1,3 +1,10 @@
+import package:maid/widgets/settings/artificial_intelligence_settings.dart;
+import package:maid/widgets/settings/user_settings.dart;
+import package:maid/widgets/settings/assistant_settings.dart;
+import package:maid/widgets/settings/system_settings.dart;
+import package:maid/controllers/chat_controller.dart;
+import package:maid/controllers/app_settings.dart;
+
 import "../../controllers/app_settings.dart";
 import "../../controllers/chat_controller.dart";
 import "../settings/system_settings.dart";
