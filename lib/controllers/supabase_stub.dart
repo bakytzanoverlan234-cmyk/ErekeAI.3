@@ -8,9 +8,9 @@ class SupabaseClient {
 }
 
 class SupabaseAuth {
-  Future<void> signUp({required String email, required String password}) async {}
+  Future<void> signUp({String? email, String? password}) async {}
   Future<void> resetPasswordForEmail(String email) async {}
-  Future<void> verifyOTP({required String token, required OtpType type}) async {}
+  Future<void> verifyOTP({String? token, OtpType? type}) async {}
   Future<void> updateUser(UserAttributes attr) async {}
 }
 
