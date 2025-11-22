@@ -1,3 +1,4 @@
+import "package:maid/controllers/artificial_intelligence_controller.dart";
 part of 'package:maid/main.dart';
 
 class ApiKeyTextField extends StatelessWidget {

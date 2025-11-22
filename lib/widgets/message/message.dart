@@ -1,3 +1,4 @@
+import "package:maid/controllers/app_settings.dart";
 part of 'package:maid/main.dart';
 
 class MessageWidget extends StatefulWidget {
