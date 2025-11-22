@@ -1,32 +1,27 @@
-import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 
-class AppSettings extends ChangeNotifier {
+class AppSettings {
   static final AppSettings instance = AppSettings._internal();
   AppSettings._internal();
 
-  // Заглушки, чтобы не падал старый код
-  String? userName;
-  String? assistantName;
-  String systemPrompt = '';
+  String assistantName = "Ассистент";
+  String userName = "Пользователь";
+  String systemPrompt = "Ты полезный ассистент";
 
-  Future<void> load() async {}
-  Future<void> save() async {}
+  Color seedColor = const Color(0xFF6750A4);
 
-  void setUserName(String value) {
-    userName = value;
-    notifyListeners();
-  }
+  String? assistantImage;
+  String? userImage;
 
   void setAssistantName(String value) {
     assistantName = value;
-    notifyListeners();
+  }
+
+  void setUserName(String value) {
+    userName = value;
   }
 
   void setSystemPrompt(String value) {
     systemPrompt = value;
-    notifyListeners();
   }
-
-  Future<void> loadUserImage() async {}
-  Future<void> loadAssistantImage() async {}
 }
