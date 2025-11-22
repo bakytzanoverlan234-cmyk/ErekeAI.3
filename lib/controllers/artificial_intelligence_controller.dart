@@ -70,3 +70,15 @@ class LlamaCppController extends ChangeNotifier {
   void pickModel() {}
   void loadModelFile(String path, bool force) {}
 }
+
+/// ✅ Заглушка OllamaController для UI
+class OllamaController extends ChangeNotifier {
+  static OllamaController? instance = OllamaController();
+
+  bool searchLocalNetwork = false;
+
+  void toggleSearch(bool value) {
+    searchLocalNetwork = value;
+    notifyListeners();
+  }
+}
